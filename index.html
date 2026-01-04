@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Business Model Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 32px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.95);
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 800px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 35px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            padding-right: 50px;
+            font-size: 28px;
+        }
+
+        .description {
+            color: #444;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-size: 17px;
+        }
+
+        .description p {
+            margin-bottom: 15px;
+        }
+
+        .show-more-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .show-more-btn:hover {
+            background: #5568d3;
+        }
+
+        .details {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .details h3 {
+            color: #667eea;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .details ul, .details ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .details li {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: #444;
+            font-size: 16px;
+        }
+
+        .selection-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .selection-section h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 26px;
+        }
+
+        .instruction-text {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .selected-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 100px;
+        }
+
+        .empty-message {
+            color: #999;
+            text-align: center;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .selected-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .rank-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .item-name {
+            flex: 1;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .rank-controls {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .rank-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .rank-btn:hover:not(:disabled) {
+            background: #5568d3;
+        }
+
+        .rank-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #c82333;
+        }
+
+        .export-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+        }
+
+        .export-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .notification {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 18px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 2000;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 20px;
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Business Model Assessment</h1>
+        <p class="subtitle">Click on any business model to learn more, then rank your favorites</p>
+        
+        <div class="grid" id="cardGrid"></div>
+
+        <div class="selection-section">
+            <h2>Your Selected Business Models</h2>
+            <p class="instruction-text">Rank from most to least favorite using ↑ ↓ arrows</p>
+            <div class="selected-list" id="selectedList">
+                <div class="empty-message">Click on business models above to add them here</div>
+            </div>
+            <button class="export-btn" id="exportBtn" onclick="copyResults()">Copy Results to Share</button>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div class="description" id="modalDescription"></div>
+            <button class="show-more-btn" onclick="toggleDetails()">Show More Details</button>
+            <div class="details" id="modalDetails"></div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">✓ Copied to clipboard!</div>
+
+    <script>
+        const businessModels = [
+            {
+                name: "AI Automation for Micro-Tasks",
+                description: "<p>This business helps companies and busy people save time by using AI to handle small, repetitive tasks they don't want to do themselves. Think of tasks like sorting emails, scheduling appointments, filling out forms, or organizing files.</p><p>You create systems that automatically do these boring jobs so your clients can focus on more important work. The AI works 24/7 without getting tired, making mistakes less often than humans do on repetitive work.</p>",
+                examples: [
+                    "A real estate agent uses your AI to automatically respond to common questions from potential buyers, schedule property viewings, and send follow-up emails",
+                    "A small online store owner has your AI system automatically update inventory, process refund requests, and categorize customer feedback",
+                    "A consultant uses your automation to extract data from receipts, create expense reports, and file them in the right folders"
+                ],
+                customers: [
+                    "Start by identifying businesses in your area that handle lots of repetitive tasks (dentist offices, insurance agents, property managers)",
+                    "Create a simple video showing a common task taking 30 minutes manually vs. 30 seconds with your automation",
+                    "Offer a free trial where you automate ONE specific task for them to prove it works",
+                    "Once they see results, expand to automate more tasks and charge a monthly fee",
+                    "Ask happy clients to introduce you to other business owners who need the same help"
+                ]
+            },
+            {
+                name: "AI Voice Agents for Local Businesses",
+                description: "<p>This service provides businesses with AI receptionists that answer phone calls, just like a real person would. These AI assistants can answer questions, book appointments, take messages, and handle basic customer requests without anyone needing to pick up the phone.</p><p>Local businesses love this because they never miss a call, even after hours or when they're busy with customers. The AI sounds natural and can handle multiple calls at once.</p>",
+                examples: [
+                    "A hair salon uses your AI receptionist to answer calls about pricing, book haircut appointments, and send appointment reminders via text",
+                    "A plumbing company has your AI handle emergency calls at night, collect customer information, and dispatch the right plumber based on the problem",
+                    "A medical clinic uses your voice AI to verify insurance information, schedule patient appointments, and answer common questions about office hours"
+                ],
+                customers: [
+                    "Visit local businesses that always seem busy (restaurants, salons, doctors offices) and notice when calls go unanswered",
+                    "Create a recorded demo of your AI handling a typical call for that type of business",
+                    "Offer to handle their after-hours calls for free for one week to prove it works",
+                    "Show them how many calls they're missing with simple tracking data",
+                    "Charge a monthly fee that's less than hiring a part-time receptionist"
+                ]
+            },
+            {
+                name: "Agentic AI Platforms",
+                description: "<p>This business involves creating AI systems that can work independently to complete bigger projects, not just single tasks. These AI \"agents\" can plan, make decisions, and work through multi-step processes without constant human supervision.</p><p>Think of it like having a smart assistant that can handle an entire project from start to finish. For example, if you ask it to research competitors, it can search the web, gather information, organize findings, and create a report all on its own.</p>",
+                examples: [
+                    "A marketing agency uses your AI agent to research a client's competitors, identify their strategies, find their most successful content, and write a competitive analysis report",
+                    "A recruiting firm has your AI agent scan job applications, research candidates on LinkedIn, check their qualifications against job requirements, and create a shortlist with notes",
+                    "A startup founder uses your platform to have an AI agent monitor industry news, identify potential partnership opportunities, and draft outreach emails"
+                ],
+                customers: [
+                    "Target companies that do a lot of research or analysis work (marketing agencies, consulting firms, investment companies)",
+                    "Create a case study showing how your AI completed a real project and saved 20+ hours of work",
+                    "Offer to run one complete project for them for free so they see the quality of work",
+                    "Package your service as a monthly subscription where they get a certain number of AI agent projects",
+                    "Focus on niches where research is expensive (legal research, market analysis, due diligence)"
+                ]
+            },
+            {
+                name: "Data Services with AI",
+                description: "<p>This business helps companies make sense of all the information they collect but don't know what to do with. You use AI to analyze data, find patterns, and create simple reports that help businesses make better decisions.</p><p>Many businesses collect customer information, sales data, and other numbers but don't have time or skills to understand what it means. Your AI does the heavy lifting of sorting through data and presenting insights in plain English.</p>",
+                examples: [
+                    "A restaurant chain sends you their sales data, and your AI identifies which menu items sell best on which days, helping them optimize inventory and reduce waste",
+                    "An e-commerce store uses your service to analyze which customers are most likely to buy again, so they can focus marketing efforts on the right people",
+                    "A fitness center has your AI analyze membership data to predict which members might cancel soon, allowing them to reach out with special offers"
+                ],
+                customers: [
+                    "Approach businesses that collect lots of data but make decisions based on gut feeling (retailers, restaurants, gyms)",
+                    "Offer a free analysis of data they already have to uncover one surprising insight",
+                    "Create a simple dashboard they can check weekly to see important trends",
+                    "Show them how one insight saved or made them money to prove the value",
+                    "Charge monthly for ongoing analysis and regular insight reports"
+                ]
+            },
+            {
+                name: "AI Shadow Operating",
+                description: "<p>This service involves running an AI system that works alongside a business owner or executive, learning their style and handling routine operational decisions. It's like having a clone that can handle day-to-day business operations while the owner focuses on growth and strategy.</p><p>The AI learns how the business owner makes decisions by watching patterns over time, then starts handling similar decisions automatically.</p>",
+                examples: [
+                    "A busy entrepreneur has your AI manage their calendar, automatically decline unimportant meetings, schedule time for strategic work, and coordinate with their team",
+                    "A franchise owner uses your system to monitor daily operations across locations, flag problems that need attention, and approve routine vendor payments",
+                    "A consultant has your AI handle project management, track deliverables, follow up with clients on outstanding items, and escalate only issues that need personal attention"
+                ],
+                customers: [
+                    "Target successful small business owners who complain about working too many hours",
+                    "Show them a typical week of their time and how much is spent on routine decisions",
+                    "Start with a one-month trial where your AI handles just their email and calendar",
+                    "Demonstrate how many hours they got back and what they could do with that time",
+                    "Expand gradually to more business operations as trust builds"
+                ]
+            },
+            {
+                name: "Automated Social Media Content Machines",
+                description: "<p>This business creates AI-powered systems that automatically post content to social media accounts without anyone lifting a finger. The AI generates posts, finds relevant images, and publishes everything on schedule while maintaining the brand's voice and style.</p><p>Most businesses know they should post on social media but don't have time to do it consistently. Your automated system keeps their accounts active and engaging by creating content based on their industry, news, and what their audience likes.</p>",
+                examples: [
+                    "A dentist's office has your system automatically post dental health tips, before/after photos, and appointment reminders three times per week",
+                    "A local coffee shop uses your machine to post daily specials, customer spotlights, and coffee facts while matching their friendly, casual tone",
+                    "A personal trainer has your AI create and post workout tips, motivational quotes, and exercise videos consistently every day"
+                ],
+                customers: [
+                    "Find local businesses with dead or inconsistent social media accounts",
+                    "Create a one-month content calendar showing what their posts could look like",
+                    "Offer to run their account for free for two weeks to show engagement improvement",
+                    "Show them how consistent posting brought in new customers or inquiries",
+                    "Charge a monthly fee that's less than hiring a social media manager"
+                ]
+            },
+            {
+                name: "Monetized Private Communities",
+                description: "<p>This business involves creating exclusive online groups where people pay to be members because of the value they get from being part of the community. You use AI to help manage the community, create content, answer questions, and keep members engaged.</p><p>People join and stay in these communities when they get helpful advice, connect with others like them, and have access to resources they can't find elsewhere.</p>",
+                examples: [
+                    "You run a community for freelance writers where members pay $50/month to access AI writing tools, get feedback on their work, and connect with clients - your AI moderates discussions and answers common questions",
+                    "A membership site for local real estate investors charges $99/month for market analysis, deal evaluation tools powered by AI, and networking opportunities",
+                    "An online community for small restaurant owners where your AI provides daily tips, answers questions about regulations, and connects members facing similar challenges"
+                ],
+                customers: [
+                    "Identify a group of people with a common problem or interest that you understand well",
+                    "Start a free Facebook or Discord group and provide valuable help to build trust",
+                    "Use AI to help you create daily content and answer repetitive questions at scale",
+                    "Once you have 100+ active members, launch a paid tier with premium AI-powered tools and resources",
+                    "Keep improving based on what members ask for most often"
+                ]
+            },
+            {
+                name: "AI Chatbot Subscription Services",
+                description: "<p>This business provides companies with smart chatbots that answer customer questions on their websites 24/7. These chatbots can handle everything from basic questions to helping customers find products to troubleshooting problems.</p><p>Businesses pay you monthly because the chatbot never sleeps, never gets frustrated, and can help multiple customers at the same time.</p>",
+                examples: [
+                    "An online clothing store uses your chatbot to help shoppers find the right size, suggest outfits, track orders, and process returns without human help",
+                    "A software company has your chatbot answer technical support questions, walk users through setup steps, and create support tickets for complex issues",
+                    "A hotel uses your chatbot on their website to answer questions about amenities, check room availability, and handle booking questions before passing serious inquiries to staff"
+                ],
+                customers: [
+                    "Target websites where you notice they don't have live chat or where chat is only available during business hours",
+                    "Reach out showing specific questions on their site that a chatbot could answer",
+                    "Offer to install a chatbot for free for 30 days and track how many questions it answers",
+                    "Show them how much time their staff saved and how many after-hours visitors got help",
+                    "Charge monthly based on the number of conversations the bot handles"
+                ]
+            },
+            {
+                name: "Local Business Voice AI Agents",
+                description: "<p>This service focuses specifically on giving local service businesses (plumbers, electricians, contractors, etc.) an AI phone system that handles their calls professionally. These businesses live and die by phone calls but are often too busy doing the actual work to answer.</p><p>Your AI answers calls, qualifies leads by asking the right questions, books appointments directly into their calendar, and sends all the details via text or email.</p>",
+                examples: [
+                    "An electrician has your AI answer calls about electrical problems, ask qualifying questions to understand urgency, give price estimates for common jobs, and book appointments",
+                    "A house cleaning service uses your voice AI to provide instant quotes based on home size, book cleaning appointments, and send confirmations with what to expect",
+                    "An HVAC company has your AI handle service calls, ask about the issue, schedule technician visits, and send emergency calls directly to the owner's cell phone"
+                ],
+                customers: [
+                    "Drive around your area and notice service trucks - write down their numbers",
+                    "Call them during their busy hours and see how many don't answer or go to voicemail",
+                    "Show up at their location or call back to explain how many calls they're missing",
+                    "Offer to handle their calls for one week for free to prove it brings in more business",
+                    "Charge a simple monthly rate that's less than what they'd lose from missing a couple jobs"
+                ]
+            },
+            {
+                name: "AI-Powered Lead Magnets and Digital Products",
+                description: "<p>This business creates valuable tools, calculators, assessments, or resources powered by AI that businesses can give away for free to collect customer contact information. These \"lead magnets\" help businesses grow their email lists and find potential customers.</p><p>You use AI to make these tools smart and personalized - they give custom results based on what each user enters.</p>",
+                examples: [
+                    "You create an AI-powered \"Business Name Generator\" that marketing agencies give away on their website - when people use it, they enter their email and the agency gets a new lead",
+                    "A financial advisor uses your AI retirement calculator on their site - users get a personalized retirement plan and the advisor gets their contact info to follow up",
+                    "You build an AI-powered \"Resume Reviewer\" that career coaches offer for free - it gives personalized feedback and collects emails of job seekers"
+                ],
+                customers: [
+                    "Find businesses that have blogs or websites but no way to collect visitor emails",
+                    "Create a specific lead magnet idea that would attract their ideal customers",
+                    "Build a simple demo version to show them how it would work",
+                    "Install it on their site and show them how many new contacts they collect in the first month",
+                    "Either charge per lead magnet you create or take a percentage of sales if you're selling digital products"
+                ]
+            }
+        ];
+
+        let selectedModels = [];
+        let currentModel = null;
+        let detailsVisible = false;
+
+        // Initialize cards
+        function init() {
+            const cardGrid = document.getElementById('cardGrid');
+            businessModels.forEach((model, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h3>${model.name}</h3>`;
+                card.onclick = () => openModal(index);
+                cardGrid.appendChild(card);
+            });
+        }
+
+        function openModal(index) {
+            currentModel = businessModels[index];
+            detailsVisible = false;
+            
+            document.getElementById('modalTitle').textContent = currentModel.name;
+            document.getElementById('modalDescription').innerHTML = currentModel.description;
+            document.getElementById('modalDetails').style.display = 'none';
+            document.querySelector('.show-more-btn').textContent = 'Show More Details';
+            
+            // Add to selected list if not already there
+            if (!selectedModels.includes(currentModel.name)) {
+                selectedModels.push(currentModel.name);
+                updateSelectedList();
+            }
+            
+            document.getElementById('modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function toggleDetails() {
+            const detailsDiv = document.getElementById('modalDetails');
+            const btn = document.querySelector('.show-more-btn');
+            
+            if (!detailsVisible) {
+                let html = '<h3>Real World Examples:</h3><ul>';
+                currentModel.examples.forEach(ex => {
+                    html += `<li>${ex}</li>`;
+                });
+                html += '</ul><h3>How to Get Customers:</h3><ol>';
+                currentModel.customers.forEach(step => {
+                    html += `<li>${step}</li>`;
+                });
+                html += '</ol>';
+                
+                detailsDiv.innerHTML = html;
+                detailsDiv.style.display = 'block';
+                btn.textContent = 'Hide Details';
+                detailsVisible = true;
+            } else {
+                detailsDiv.style.display = 'none';
+                btn.textContent = 'Show More Details';
+                detailsVisible = false;
+            }
+        }
+
+        function moveUp(index) {
+            if (index > 0) {
+                [selectedModels[index], selectedModels[index - 1]] = [selectedModels[index - 1], selectedModels[index]];
+                updateSelectedList();
+            }
+        }
+
+        function moveDown(index) {
+            if (index < selectedModels.length - 1) {
+                [selectedModels[index], selectedModels[index + 1]] = [selectedModels[index + 1], selectedModels[index]];
+                updateSelectedList();
+            }
+        }
+
+        function removeItem(index) {
+            selectedModels.splice(index, 1);
+            updateSelectedList();
+        }
+
+        function updateSelectedList() {
+            const listDiv = document.getElementById('selectedList');
+            const exportBtn = document.getElementById('exportBtn');
+            
+            if (selectedModels.length === 0) {
+                listDiv.innerHTML = '<div class="empty-message">Click on business models above to add them here</div>';
+                exportBtn.disabled = true;
+            } else {
+                listDiv.innerHTML = '';
+                exportBtn.disabled = false;
+                
+                selectedModels.forEach((model, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'selected-item';
+                    
+                    item.innerHTML = `
+                        <div class="rank-number">${index + 1}</div>
+                        <div class="item-name">${model}</div>
+                        <div class="rank-controls">
+                            <button class="rank-btn" onclick="moveUp(${index})" ${index === 0 ? 'disabled' : ''}>↑</button>
+                            <button class="rank-btn" onclick="moveDown(${index})" ${index === selectedModels.length - 1 ? 'disabled' : ''}>↓</button>
+                        </div>
+                        <button class="remove-btn" onclick="removeItem(${index})">×</button>
+                    `;
+                    
+                    listDiv.appendChild(item);
+                });
+            }
+        }
+
+        function copyResults() {
+            if (selectedModels.length === 0) {
+                alert('Please select at least one business model first!');
+                return;
+            }
+            
+            let text = 'AI BUSINESS MODEL ASSESSMENT RESULTS\n';
+            text += '=====================================\n\n';
+            text += 'Ranked Business Models (Most to Least Favorite):\n\n';
+            
+            selectedModels.forEach((model, i) => {
+                text += `${i + 1}. ${model}\n`;
+            });
+            
+            text += `\n\nAssessment completed: ${new Date().toLocaleDateString()}`;
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification();
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification();
+            } catch (err) {
+                alert('Could not copy automatically. Here are your results:\n\n' + text);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2500);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = (e) => {
+            const modal = document.getElementById('modal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Initialize when page loads
+        init();
+    </script>
+</body>
+</html>
