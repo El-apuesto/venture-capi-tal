@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contractor Orientation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .key-point {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .info-button {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .info-button:hover {
+            background: #f8f9ff;
+            transform: translateY(-1px);
+        }
+
+        .choice-button {
+            flex: 1;
+            min-width: 140px;
+            background: white;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .choice-button:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .choice-button.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .popup.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e0e0e0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .close-popup:hover {
+            background: #d0d0d0;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .checkbox-group {
+            margin: 15px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #555;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Step 1: Welcome -->
+        <div class="step active" data-step="1">
+            <h1>Welcome! 👋</h1>
+            <p>We help small rural towns win grant money for essential projects like water systems, roads, fire trucks, clinics, and parks.</p>
+            <div class="key-point">
+                <strong>This quick orientation shows how you might work with us as a contractor.</strong>
+            </div>
+            <p>We'll keep this short and interactive - click through at your own pace!</p>
+            <div class="button-group">
+                <button onclick="nextStep()">Let's Start</button>
+            </div>
+        </div>
+
+        <!-- Step 2: What We Do -->
+        <div class="step" data-step="2">
+            <h2>What We Do</h2>
+            <p>We act as the part-time grant office for small towns that don't have their own planner or grant writer.</p>
+            <div class="button-group">
+                <button class="info-button" onclick="showPopup('whatWeDo')">Learn More</button>
+            </div>
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn-secondary" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()">Next</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Who We Serve -->
+        <div class="step" data-step="3">
+            <h2>Who We Serve</h2>
+            <p>Tiny towns, rural water districts, fire departments, and small nonprofits in rural areas.</p>
+            <div class="key-point">
+                Most clients have very limited staff and time - that's why they need us!
+            </div>
+            <div class="button-group">
+                <button class="info-button" onclick="showPopup('whoWeServe')">See Examples</button>
+            </div>
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn-secondary" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()">Next</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Your Potential Work -->
+        <div class="step" data-step="4">
+            <h2>What You Might Do</h2>
+            <p>As a contractor, you could help with:</p>
+            <ul>
+                <li>Researching grant opportunities</li>
+                <li>Writing or editing applications</li>
+                <li>Organizing deadlines and details</li>
+                <li>Gathering info from clients</li>
+            </ul>
+            <div class="button-group">
+                <button class="info-button" onclick="showPopup('yourWork')">More Details</button>
+            </div>
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn-secondary" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()">Next</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Experience Check -->
+        <div class="step" data-step="5">
+            <h2>Quick Question</h2>
+            <p>Have you worked on grants before?</p>
+            <div class="button-group">
+                <button class="choice-button" onclick="selectChoice(this, 'experience', 'Yes, a lot')">Yes, a lot</button>
+                <button class="choice-button" onclick="selectChoice(this, 'experience', 'Some')">Some</button>
+                <button class="choice-button" onclick="selectChoice(this, 'experience', 'Not yet')">Not yet</button>
+            </div>
+            <p style="margin-top: 20px; font-size: 14px; color: #777;">Don't worry - grant experience is helpful but not required for all roles. We can train the right person!</p>
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn-secondary" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()">Next</button>
+            </div>
+        </div>
+
+        <!-- Step 6: Expectations -->
+        <div class="step" data-step="6">
+            <h2>How We Work</h2>
+            <div class="key-point">
+                ✓ Mostly online work<br>
+                ✓ Checklists and clear deadlines<br>
+                ✓ Communicate early if confused<br>
+                ✓ Quality and honesty over speed
+            </div>
+            <div class="button-group">
+                <button class="info-button" onclick="showPopup('expectations')">More on Expectations</button>
+            </div>
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn-secondary" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()">Next</button>
+            </div>
+        </div>
+
+        <!-- Step 7: Availability -->
+        <div class="step" data-step="7">
+            <h2>Workload & Requirements</h2>
+            <p><strong>Workload:</strong> Variable depending on grant cycles. Some periods are busy, others are quiet. Possible urgent deadlines.</p>
+            <p><strong>Basic needs:</strong> Reliable internet, basic computer skills, ability to read and follow written instructions.</p>
+            <div class="button-group">
+                <button class="info-button" onclick="showPopup('requirements')">Learn More</button>
+            </div>
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn-secondary" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()">Next</button>
+            </div>
+        </div>
+
+        <!-- Step 8: Values -->
+        <div class="step" data-step="8">
+            <h2>Our Values</h2>
+            <p>We care about helping small communities that are often overlooked.</p>
+            <div class="key-point">
+                We try to be patient, respectful, and practical with every client - and with each other.
+            </div>
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn-secondary" onclick="prevStep()">Back</button>
+                <button onclick="nextStep()">Next</button>
+            </div>
+        </div>
+
+        <!-- Step 9: Application Form -->
+        <div class="step" data-step="9">
+            <h2>Tell Us About You</h2>
+            <form id="applicationForm">
+                <label>Full Name *</label>
+                <input type="text" id="name" required>
+
+                <label>Email *</label>
+                <input type="email" id="email" required>
+
+                <label>Phone *</label>
+                <input type="tel" id="phone" required>
+
+                <label>City, State *</label>
+                <input type="text" id="location" required>
+
+                <label>Skills (check all that apply)</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="research" value="research">
+                        <label for="research" style="margin: 0;">Research</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="writing" value="writing">
+                        <label for="writing" style="margin: 0;">Writing</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="organizing" value="organizing">
+                        <label for="organizing" style="margin: 0;">Organizing</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="communication" value="communication">
+                        <label for="communication" style="margin: 0;">Client Communication</label>
+                    </div>
+                </div>
+
+                <label>Briefly describe your experience with writing, research, or grants *</label>
+                <textarea id="experience" rows="4" required></textarea>
+
+                <div class="checkbox-item" style="margin-top: 10px;">
+                    <input type="checkbox" id="contractorAgreement" required>
+                    <label for="contractorAgreement" style="margin: 0;">I'm okay working as an independent contractor (not a full-time employee) *</label>
+                </div>
+            </form>
+            <div class="button-group" style="margin-top: 30px;">
+                <button class="btn-secondary" onclick="prevStep()">Back</button>
+                <button onclick="submitForm()">Submit</button>
+            </div>
+        </div>
+
+        <!-- Step 10: Thank You -->
+        <div class="step" data-step="10">
+            <div class="success-message">
+                <div class="success-icon">✅</div>
+                <h2>Thank You!</h2>
+                <p>We'll review your information and reach out if there's a good match.</p>
+                <p>You'll get an email about next steps if we move forward.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popups -->
+    <div class="popup" id="whatWeDo">
+        <div class="popup-content">
+            <div class="close-popup" onclick="closePopup('whatWeDo')">×</div>
+            <h2>What We Do - In Depth</h2>
+            <p>We provide comprehensive grant services:</p>
+            <ul>
+                <li><strong>Find grants:</strong> We monitor funding opportunities from federal, state, and foundation sources</li>
+                <li><strong>Plan projects:</strong> Help towns figure out what they need and how to present it</li>
+                <li><strong>Write applications:</strong> Prepare complete, competitive grant proposals</li>
+                <li><strong>Post-award support:</strong> Sometimes help with reporting and compliance after they win</li>
+            </ul>
+            <p>Think of us as the grant department these small communities can't afford to hire full-time.</p>
+        </div>
+    </div>
+
+    <div class="popup" id="whoWeServe">
+        <div class="popup-content">
+            <div class="close-popup" onclick="closePopup('whoWeServe')">×</div>
+            <h2>Who We Serve - Examples</h2>
+            <p>Our typical clients include:</p>
+            <ul>
+                <li><strong>Small towns:</strong> Population 500-5,000, maybe one part-time clerk</li>
+                <li><strong>Rural water districts:</strong> Serving scattered communities, need infrastructure upgrades</li>
+                <li><strong>Volunteer fire departments:</strong> Need equipment but have no grant writer</li>
+                <li><strong>Rural nonprofits:</strong> Food banks, senior centers, community clinics</li>
+            </ul>
+            <p>These communities have real needs but limited resources. That's our niche.</p>
+        </div>
+    </div>
+
+    <div class="popup" id="yourWork">
+        <div class="popup-content">
+            <div class="close-popup" onclick="closePopup('yourWork')">×</div>
+            <h2>Your Work - Detailed Breakdown</h2>
+            <p>Depending on your skills and the project, you might:</p>
+            <ul>
+                <li><strong>Research:</strong> Search grant databases, read RFPs, identify good matches for clients</li>
+                <li><strong>Write/Edit:</strong> Draft sections of applications, edit for clarity, ensure all requirements are met</li>
+                <li><strong>Organize:</strong> Track deadlines, create checklists, manage document versions</li>
+                <li><strong>Gather info:</strong> Email clients for data, photos, letters of support</li>
+                <li><strong>Format:</strong> Prepare final documents according to funder requirements</li>
+                <li><strong>Report:</strong> Help write simple progress reports for active grants</li>
+            </ul>
+            <p>Most tasks are well-defined with clear instructions and examples.</p>
+        </div>
+    </div>
+
+    <div class="popup" id="expectations">
+        <div class="popup-content">
+            <div class="close-popup" onclick="closePopup('expectations')">×</div>
+            <h2>Expectations - What Success Looks Like</h2>
+            <ul>
+                <li><strong>Online work:</strong> You'll work remotely using email, cloud documents, and video calls</li>
+                <li><strong>Checklists:</strong> We use clear task lists so you always know what's next</li>
+                <li><strong>Deadlines matter:</strong> Grant deadlines are hard - we need reliability</li>
+                <li><strong>Ask early:</strong> If something's confusing, ask right away - don't guess</li>
+                <li><strong>Quality over speed:</strong> Better to do it right than do it fast</li>
+                <li><strong>Honesty:</strong> Tell us if you're stuck, behind, or need help</li>
+            </ul>
+            <p>We're looking for someone dependable who communicates well.</p>
+        </div>
+    </div>
+
+    <div class="popup" id="requirements">
+        <div class="popup-content">
+            <div class="close-popup" onclick="closePopup('requirements')">×</div>
+            <h2>Requirements & Workload Details</h2>
+            <p><strong>Workload varies:</strong></p>
+            <ul>
+                <li>Grant cycles create busy periods (often in spring and fall)</li>
+                <li>Some weeks might be 5-10 hours, others 20+</li>
+                <li>Occasional urgent deadlines (we try to give notice!)</li>
+            </ul>
+            <p><strong>You'll need:</strong></p>
+            <ul>
+                <li>Reliable internet connection</li>
+                <li>Computer with word processing and spreadsheet software</li>
+                <li>Ability to read and follow detailed written instructions</li>
+                <li>Email and basic file management skills</li>
+            </ul>
+            <p><strong>Helpful but not required:</strong></p>
+            <ul>
+                <li>Previous grant writing experience</li>
+                <li>Familiarity with rural community needs</li>
+                <li>Project management tools experience</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 10;
+        const userData = {};
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showStep(stepNum) {
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.querySelector(`[data-step="${stepNum}"]`).classList.add('active');
+            currentStep = stepNum;
+            updateProgress();
+            window.scrollTo(0, 0);
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                showStep(currentStep + 1);
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
+        }
+
+        function showPopup(popupId) {
+            document.getElementById(popupId).classList.add('active');
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).classList.remove('active');
+        }
+
+        function selectChoice(button, key, value) {
+            // Remove selected class from siblings
+            button.parentElement.querySelectorAll('.choice-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            // Add selected class to clicked button
+            button.classList.add('selected');
+            // Store the answer
+            userData[key] = value;
+        }
+
+        function submitForm() {
+            const form = document.getElementById('applicationForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Collect form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                location: document.getElementById('location').value,
+                skills: [],
+                experienceText: document.getElementById('experience').value,
+                contractorAgreement: document.getElementById('contractorAgreement').checked
+            };
+
+            // Collect skills
+            ['research', 'writing', 'organizing', 'communication'].forEach(skill => {
+                if (document.getElementById(skill).checked) {
+                    formData.skills.push(skill);
+                }
+            });
+
+            // Combine with previous answers
+            const completeData = { ...userData, ...formData };
+
+            // Log to console (in real app, this would send to server)
+            console.log('Application submitted:', completeData);
+
+            // Show thank you page
+            nextStep();
+        }
+
+        // Close popup when clicking outside
+        document.querySelectorAll('.popup').forEach(popup => {
+            popup.addEventListener('click', (e) => {
+                if (e.target === popup) {
+                    popup.classList.remove('active');
+                }
+            });
+        });
+
+        // Initialize progress bar
+        updateProgress();
+    </script>
+</body>
+</html>
